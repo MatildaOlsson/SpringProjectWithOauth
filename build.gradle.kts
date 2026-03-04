@@ -6,11 +6,7 @@ plugins {
 
 group = "se.deved"
 version = "0.0.1-SNAPSHOT"
-description = "Mitt OAuth project "
-
-tasks.named<JavaExec>("bootRun") {
-    jvmArgs("--enable-native-access=ALL-UNNAMED")
-}
+description = "Mitt project for Spring Boot"
 
 java {
 	toolchain {
@@ -29,16 +25,16 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-security-oauth2-client")
-//	implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
-    implementation("io.netty:netty-resolver-dns-native-macos:4.2.9.Final:osx-aarch_64")
+    implementation("org.springframework.boot:spring-boot-starter-hateoas")
+
 	compileOnly("org.projectlombok:lombok")
+	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-security-oauth2-client-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

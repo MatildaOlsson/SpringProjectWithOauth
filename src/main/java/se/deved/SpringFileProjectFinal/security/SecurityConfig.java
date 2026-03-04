@@ -1,4 +1,4 @@
-package se.deved.SpringOathProject;
+package se.deved.SpringFileProjectFinal.security;
 
 
 import org.springframework.context.annotation.Bean;
