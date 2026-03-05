@@ -1,17 +1,39 @@
 package se.deved.SpringFileProjectFinal.models;
 
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity (name = "users")
 public class User {
 
     @Id
     private final UUID id = UUID.randomUUID();
 
+    @NotNull
     private String username;
     private String password;
 
     private String oidcId;
     private String oidcProvider;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private List<Folder> folderList = new ArrayList<>();
+
+    public User(String username,String password) {
+        this.username = username;
+        this.password =password;
+        this.folderList = new ArrayList<>();
+    }
 }

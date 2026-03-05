@@ -16,9 +16,42 @@ public class SecurityConfig {
         http.oauth2Login(oauth -> {
             oauth.successHandler(((request, response, authentication) -> {
                 System.out.println("AUTHORIZED");
-                response.sendRedirect("/");
+//                response.sendRedirect("/");
             }));
         });
         return http.build();
     }
+
 }
+//
+//
+//        @Bean
+//        public SecurityFilterChain filterChain(
+//                HttpSecurity http,
+//                IUserService userService,
+//                JwtService jwtService,
+//                OAuth2SuccessHandler oauth2SuccessHandler
+//        ) {
+//            http.csrf(AbstractHttpConfigurer::disable)
+//                    .userDetailsService(userService)
+//                    .oauth2Login(oauth ->
+//                            oauth.successHandler(oauth2SuccessHandler)
+//                    )
+//                    .authorizeHttpRequests(auth -> {
+//                        auth.requestMatchers("/user/register").permitAll()
+//                                .requestMatchers("/user/login").permitAll()
+////                                .requestMatchers(HttpMethod.GET, "/post/all").permitAll()
+////                                .requestMatchers(HttpMethod.GET, "/post/*").permitAll()
+////                                .requestMatchers("/v3/api-docs/**").permitAll()
+////                                .requestMatchers("/swagger-ui/**").permitAll()
+////                                .requestMatchers("/swagger-ui.html").permitAll()
+//                                .anyRequest().authenticated();
+//                    })
+//                    .addFilterAfter(new CustomAuthenticationFilter(userService, jwtService), OAuth2LoginAuthenticationFilter.class);
+//
+//            return http.build();
+//        }
+//    }
+
+
+
