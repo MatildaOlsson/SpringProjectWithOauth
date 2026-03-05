@@ -8,9 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 import se.deved.SpringFileProjectFinal.dtos.DownloadFileResponse;
 import se.deved.SpringFileProjectFinal.dtos.UploadFileRequest;
 import se.deved.SpringFileProjectFinal.exceptions.NoSuchFileFoundException;
-import se.deved.SpringFileProjectFinal.models.FileObject;
-import se.deved.SpringFileProjectFinal.repositories.IFileRepository;
-import se.deved.SpringFileProjectFinal.repositories.IFolderRepository;
 import se.deved.SpringFileProjectFinal.services.FileService;
 
 import java.io.IOException;

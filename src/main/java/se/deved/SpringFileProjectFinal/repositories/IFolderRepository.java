@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface IFolderRepository extends JpaRepository<Folder, UUID> {
+public interface git addIFolderRepository extends JpaRepository<Folder, UUID> {
     Optional<Folder> findByFolderName (String folderName);
 }

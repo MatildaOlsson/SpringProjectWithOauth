@@ -2,9 +2,7 @@ package se.deved.SpringFileProjectFinal.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.deved.SpringFileProjectFinal.exceptions.NoSuchFileFoundException;
 import se.deved.SpringFileProjectFinal.exceptions.NoSuchFolderFoundException;
-import se.deved.SpringFileProjectFinal.models.FileObject;
 import se.deved.SpringFileProjectFinal.models.Folder;
 import se.deved.SpringFileProjectFinal.repositories.IFolderRepository;
 

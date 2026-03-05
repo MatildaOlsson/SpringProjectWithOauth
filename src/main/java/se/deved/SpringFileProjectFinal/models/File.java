@@ -6,14 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 @Entity(name = "files")
 @Getter
 @Setter
 @NoArgsConstructor
-public class FileObject {
+public class File {
 
     @Id
     private UUID id = UUID.randomUUID();
@@ -31,7 +30,7 @@ public class FileObject {
     @Lob
     private byte[] dataInBytes;
 
-    public FileObject(String fileName, Folder folderName, byte[] bytes) {
+    public File(String fileName, Folder folderName, byte[] bytes) {
         this.fileName = fileName;
         this.folder = folderName;
         this.dataInBytes = bytes;

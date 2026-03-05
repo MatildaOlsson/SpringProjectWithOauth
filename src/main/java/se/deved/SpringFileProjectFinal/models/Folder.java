@@ -23,7 +23,7 @@ import java.util.UUID;
         private String folderName;
 
         @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-        private List<FileObject> fileList = new ArrayList<>();
+        private List<File> fileList = new ArrayList<>();
 
     public Folder(String folderName) {
         this.folderName = folderName;
