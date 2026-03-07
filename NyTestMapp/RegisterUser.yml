@@ -1,0 +1,25 @@
+info:
+  name: RegisterUser
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://127.0.0.1:8080/user/register
+  headers:
+    - name: Contet-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "username": "testuser",
+        "password": "password123"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -20,7 +20,7 @@ public class User {
     @Id
     private final UUID id = UUID.randomUUID();
 
-    @NotNull
+
     private String username;
     private String password;
 

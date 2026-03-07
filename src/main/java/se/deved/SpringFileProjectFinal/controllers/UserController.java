@@ -11,6 +11,7 @@ import se.deved.SpringFileProjectFinal.dtos.CreateUserRequest;
 import se.deved.SpringFileProjectFinal.exceptions.UsernameAlreadyExistsException;
 import se.deved.SpringFileProjectFinal.models.User;
 import se.deved.SpringFileProjectFinal.services.UserService;
+//import se.deved.SpringFileProjectFinal.services.UserService;
 
 @RestController
 @RequestMapping("/user")
@@ -31,6 +32,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("User with name " + userRequest.getUsername() + " already exists");
         }
     }
+
 
 //    public String authenticateUser(String username, String password) throws AuthException {
 //        var user = userRepository.findByUsername(username)
