@@ -5,10 +5,7 @@ info:
 
 http:
   method: POST
-  url: http://127.0.0.1:8080/user/register
-  headers:
-    - name: Contet-Type
-      value: application/json
+  url: http://localhost:8080/register
   body:
     type: json
     data: |-
