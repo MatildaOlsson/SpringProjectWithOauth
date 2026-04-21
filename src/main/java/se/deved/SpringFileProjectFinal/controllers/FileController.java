@@ -27,20 +27,20 @@ public class FileController {
      * @return Returns response to the client
      */
 
-    @PostMapping("/{folderName}")
-    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable String folderName) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("File Empty");
-        }
-
-        try {
-            UploadFileRequest request = new UploadFileRequest(file.getName(), folderName, file.getBytes());
-            fileService.saveFile(request);
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Something went wrong");
-        }
-        return ResponseEntity.ok().body("File uploaded");
-    }
+//    @PostMapping("/{folderName}")
+//    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable String folderName) {
+//        if (file.isEmpty()) {
+//            return ResponseEntity.badRequest().body("File Empty");
+//        }
+//
+//        try {
+//            UploadFileRequest request = new UploadFileRequest(file.getName(), folderName, file.getBytes());
+//            fileService.saveFile(request);
+//        } catch (IOException e) {
+//            return ResponseEntity.internalServerError().body("Something went wrong");
+//        }
+//        return ResponseEntity.ok().body("File uploaded");
+//    }
 
     /**
      * Endpoint to download file

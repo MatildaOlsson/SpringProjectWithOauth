@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.deved.SpringFileProjectFinal.exceptions.NoSuchFolderFoundException;
 import se.deved.SpringFileProjectFinal.models.Folder;
+import se.deved.SpringFileProjectFinal.models.User;
 import se.deved.SpringFileProjectFinal.repositories.IFolderRepository;
 
 import java.util.Optional;
@@ -15,11 +16,11 @@ public class FolderService {
 
     private final IFolderRepository folderRepository;
 
-    public Folder getFolder(String folderName) {
+    public Folder getFolder(String folderName, User user) {
         Optional<Folder> folderOptional = folderRepository.findByFolderName(folderName);
         Folder folder;
         if (folderOptional.isEmpty()) {
-            folder = new Folder(folderName);
+            folder = new Folder(folderName, user); // Denna behövs tas bort för statelessness
             folderRepository.save(folder);
             return folder;
         }
@@ -42,7 +43,7 @@ public class FolderService {
                 .orElseThrow(() -> new NoSuchFolderFoundException("Folder with name: " + id + " was not found"));
 
         folderRepository.delete(folder);
-        }
+     }
     }
 
 

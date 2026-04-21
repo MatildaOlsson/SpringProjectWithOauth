@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CreateUserRequest {
-
     String username;
     String password;
-
 }

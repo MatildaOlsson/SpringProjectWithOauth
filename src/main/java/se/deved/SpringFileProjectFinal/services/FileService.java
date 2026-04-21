@@ -18,12 +18,12 @@ public class FileService {
     private final IFileRepository fileRepository;
     private final FolderService folderService;
 
-    public void saveFile (UploadFileRequest request) {
-        Folder folder = folderService.getFolder(request.getFolderName());
-
-        File internFile = new File(request.getFileName(), folder, request.getDataInBytes());
-        fileRepository.save(internFile);
-    }
+//    public void saveFile (UploadFileRequest request) {
+//        Folder folder = folderService.getFolder(request.getFolderName());
+//
+//        File internFile = new File(request.getFileName(), folder, request.getDataInBytes());
+//        fileRepository.save(internFile);
+//    }
 
     public void deleteFile(UUID id) {
         File file = fileRepository.findById(id)

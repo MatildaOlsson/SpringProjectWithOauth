@@ -7,13 +7,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import se.deved.SpringFileProjectFinal.services.UserService;
 
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, UserService userService, OAuth2SuccessHandler oauth2SuccessHandler) throws Exception {
@@ -24,9 +24,13 @@ public class SecurityConfig {
                         .requestMatchers("/user/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                // Called ONLY when logging in to github (browser)
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oauth2SuccessHandler)
-                );
+                )
+                // Called on every API request
+                .addFilterAfter(new CustomAuthenticationFilter(userService), OAuth2LoginAuthenticationFilter.class);
+
 
         return http.build();
     }

@@ -12,8 +12,7 @@ import java.util.UUID;
     @Getter
     @Setter
     @NoArgsConstructor
-
-    @Entity(name = "folder")
+    @Entity(name = "folders")
     public class Folder {
 
         @Id
@@ -22,11 +21,16 @@ import java.util.UUID;
         @Column
         private String folderName;
 
+        @ManyToOne(fetch = FetchType.LAZY)
+        private User user;
+
         @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
         private List<File> fileList = new ArrayList<>();
 
-    public Folder(String folderName) {
-        this.folderName = folderName;
+    public Folder(String folderName, User user) {
         this.id = UUID.randomUUID();
+        this.folderName = folderName;
+        this.user = user;
+        this.fileList = new ArrayList<>();
     }
 }

@@ -1,13 +1,12 @@
 package se.deved.SpringFileProjectFinal.security;
 
-import ch.qos.logback.core.subst.Token;
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -16,32 +15,46 @@ import se.deved.SpringFileProjectFinal.models.User;
 import se.deved.SpringFileProjectFinal.services.UserService;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final UserService userService;
 
-    public void onAuthenticationSuccess(@NonNull HttpServletRequest request, @Nonnull HttpServletResponse response, @Nonnull Authentication authentication) throws IOException {
-    var oauth2Token = (OAuth2AuthenticationToken) authentication;
+    public void onAuthenticationSuccess(
+            @NonNull HttpServletRequest request,
+            @Nonnull HttpServletResponse response,
+            @Nonnull Authentication authentication) throws IOException {
+        OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
 
-    var oidcProvider = oauth2Token.getAuthorizedClientRegistrationId();
-    var oidcId = oauth2Token.getName();
+        // Extract user details
+        String oidcId = oauth2Token.getName();
 
-    System.out.println("Provider: " + oidcProvider);
-    System.out.println("Id: " + oidcId);
+        // Generate token
+        String token = generateToken();
 
-    Optional<User> user = userService.getUserByOidc(oidcId);
+        // Create/overwrite user
+        User user = userService.registerOAuthUser(oidcId, token);
+        // write user details to database
+        //writeUserToDB(user);
 
-    if (user.isEmpty()) {
-        User createdUser = userService.createOidcUser(oauth2Token.getName(),oidcId, oidcProvider);
-        if (createdUser == null) {
-            response.getWriter().println("Couldn't create new user");
-        }
-    } else {
-        response.getWriter().println("Logged in as: " + user.get().getUsername());
+//        Authentication newAuth =
+//                new UsernamePasswordAuthenticationToken(
+//                        user,
+//                        null,
+//                        oauth2Token.getAuthorities()
+//                );
+//
+//        SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+        // add the token in the response
+        response.getWriter().println("Success! Your id: " + oidcId + " Your token: " + user.getPassword());
     }
-}
 
+    // Metod som kommer att retunera en sträng på 15 tecken som ska användas för identifikation/lösenord till åtkomst till
+    public String generateToken() {
+        String token = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+        return token;
+    }
 }

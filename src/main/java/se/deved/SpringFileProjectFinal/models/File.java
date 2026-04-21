@@ -20,22 +20,23 @@ public class File {
     @Column
     private String fileName;
 
-    @Column
-    private Date savedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "folder_id")
-    private Folder folder;
-
     @Lob
     private byte[] dataInBytes;
 
-    public File(String fileName, Folder folderName, byte[] bytes) {
-        this.fileName = fileName;
-        this.folder = folderName;
-        this.dataInBytes = bytes;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "folder_id")
+    private Folder folder;
+
+    public File(String fileName, byte[] bytes, User user, Folder folder) {
         this.id = UUID.randomUUID();
-        this.savedAt = new Date();
+        this.fileName = fileName;
+        this.dataInBytes = bytes;
+        this.user = user;
+        this.folder = folder;
     }
 
 
