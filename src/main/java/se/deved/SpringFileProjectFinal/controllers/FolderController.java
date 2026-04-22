@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import se.deved.SpringFileProjectFinal.dtos.FileResponse;
 import se.deved.SpringFileProjectFinal.dtos.FolderResponse;
 import se.deved.SpringFileProjectFinal.exceptions.FolderNameAlreadyExists;
 import se.deved.SpringFileProjectFinal.exceptions.NoSuchFolderFoundException;
@@ -38,16 +39,17 @@ public class FolderController {
 
     }
 
-    @GetMapping("/{folderName}")
-    public ResponseEntity<?> getFolder(@PathVariable String folderName, Authentication authentication) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getFolder(@PathVariable UUID id, Authentication authentication) {
         String userid = authentication.getPrincipal() + "";
         System.out.println("userid:" + userid);
         Folder folder;
 
         try {
-            folder = folderService.getFolder(folderName, userid);
+            folder = folderService.getFolder(id, userid);
             System.out.println("Kommer foldern till controllern?: " + folder.getFolderName()) ;
-            return ResponseEntity.ok().body(FolderResponse.fromModel(folder));
+            FolderResponse folderResponse = FolderResponse.fromModel(folder);
+            return ResponseEntity.ok().body(folderResponse);
         } catch (NoSuchFolderFoundException ignored) {
             return ResponseEntity.notFound().build();
         }

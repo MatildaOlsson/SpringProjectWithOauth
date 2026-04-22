@@ -30,7 +30,7 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private List <File> fileList = new ArrayList<>();
+    private List <FileEntity> fileList = new ArrayList<>();
 
     public User(String username,String password) {
         this.username = username;

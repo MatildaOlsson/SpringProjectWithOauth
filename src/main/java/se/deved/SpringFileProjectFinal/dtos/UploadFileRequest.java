@@ -14,13 +14,13 @@ public class UploadFileRequest {
 
         private String fileName;
 
-        private String folderName;
+        private UUID folderId;
 
         private byte[] dataInBytes;
 
-        public UploadFileRequest(String fileName, String folderName, byte[] bytes) {
+        public UploadFileRequest(String fileName, UUID folderId, byte[] bytes) {
             this.fileName = fileName;
-            this.folderName = folderName;
+            this.folderId = folderId;
             this.dataInBytes = bytes;
 
         }

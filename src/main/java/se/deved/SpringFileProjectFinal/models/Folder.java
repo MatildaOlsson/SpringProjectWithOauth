@@ -25,7 +25,7 @@ import java.util.UUID;
         private User user;
 
         @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-        private List<File> fileList = new ArrayList<>();
+        private List<FileEntity> fileList = new ArrayList<>();
 
     public Folder(String folderName, User user) {
         this.id = UUID.randomUUID();

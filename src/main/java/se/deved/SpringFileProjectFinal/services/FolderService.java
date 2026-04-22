@@ -28,7 +28,7 @@ public class FolderService {
         try {
             user = userService.findUserByOidcId(userid);
             System.out.println("User found with id: " + user.getOidcId());
-        } catch (Exception e) {
+        } catch (NoSuchUserFoundException e) {
             throw new RuntimeException(e);
         }
 
@@ -37,13 +37,11 @@ public class FolderService {
         if (folderOptional.isPresent() && folderOptional.get().getUser().equals(user)) {
             throw new FolderNameAlreadyExists("Foldername already exists");
         } else {
-            folder = new Folder(folderName, user); // Denna behövs tas bort för statelessness
-            folderRepository.save(folder);
-            return folder;
+            return folderRepository.save(new Folder(folderName, user));
         }
     }
 
-    public Folder getFolder(String folderName, String userid) {
+    public Folder getFolder(UUID folderId, String userid) {
         User user;
         try {
             user = userService.findUserByOidcId(userid);
@@ -51,7 +49,7 @@ public class FolderService {
         } catch (Exception e) {
             throw new NoSuchUserFoundException("");
         }
-        Optional<Folder> folderOptional = folderRepository.findByFolderName(folderName);
+        Optional<Folder> folderOptional = folderRepository.findById(folderId);
         Folder folder;
         if (folderOptional.isPresent() && folderOptional.get().getUser().equals(user)) {
             folder = folderOptional.get();
