@@ -29,7 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
-//    implementation("org.springframework.boot:spring-boot-starter-hateoas")
+    implementation("org.springframework.boot:spring-boot-starter-hateoas")
 //    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.auth0:java-jwt:4.4.0")
     compileOnly("org.projectlombok:lombok")

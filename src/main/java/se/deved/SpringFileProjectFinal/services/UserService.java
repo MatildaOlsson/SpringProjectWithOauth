@@ -10,6 +10,7 @@ import se.deved.SpringFileProjectFinal.models.Folder;
 import se.deved.SpringFileProjectFinal.models.User;
 import se.deved.SpringFileProjectFinal.repositories.IUserRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -82,6 +83,16 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    public User findUserByOidcId(String oidcId) {
+        return userRepository.findByOidcId(oidcId)
+                .orElseThrow(() -> new RuntimeException("Error"));
+    }
+
+    public User findUserById(UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
 

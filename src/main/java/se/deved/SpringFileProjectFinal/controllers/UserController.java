@@ -71,6 +71,11 @@ public class UserController {
 
         }
     }
+@GetMapping("/{id}")
+    public User findUserById(@PathVariable UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
 
 
