@@ -3,7 +3,6 @@ package se.deved.SpringFileProjectFinal.dtos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import se.deved.SpringFileProjectFinal.models.Folder;
 
 import java.util.UUID;
 

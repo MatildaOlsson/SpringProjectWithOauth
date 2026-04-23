@@ -2,15 +2,17 @@ package se.deved.SpringFileProjectFinal.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import se.deved.SpringFileProjectFinal.dtos.DownloadFileResponse;
 import se.deved.SpringFileProjectFinal.dtos.FileResponse;
 import se.deved.SpringFileProjectFinal.dtos.UploadFileRequest;
 import se.deved.SpringFileProjectFinal.exceptions.AutenticationException;
+import se.deved.SpringFileProjectFinal.exceptions.FileNameAlreadyExists;
 import se.deved.SpringFileProjectFinal.exceptions.NoSuchFileFoundException;
+import se.deved.SpringFileProjectFinal.exceptions.NoSuchFolderFoundException;
 import se.deved.SpringFileProjectFinal.models.FileEntity;
 import se.deved.SpringFileProjectFinal.services.FileService;
 
@@ -25,15 +27,17 @@ public class FileController {
     private final FileService fileService;
 
     /**
-     * Endpoint to upload file to a selected Folder using the UUID
-     * @param file The selected file (pdf. txt etc)
+     * Endpoint to upload file to a selected Folder using the folder-UUID.
+     * You need to use Header: "Authorization" with "Bearer: token/password from the user
+     *
+     * @param file     The selected file (pdf. txt etc)
      * @param folderId The UUID of the Folder
-     * @return Returns response to the client
+     * @return Returns response to the client with hateoas if succeeded, otherwise Exceptions
      */
 
     @PostMapping("/{folderId}/{fileName}")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable UUID folderId, @PathVariable String fileName, Authentication authentication) {
-        String userid = authentication.getPrincipal() + "";
+        String userid = authentication.getName();
         System.out.println("userid:" + userid);
         FileEntity fileObject;
 
@@ -43,62 +47,78 @@ public class FileController {
 
         try {
             UploadFileRequest request = new UploadFileRequest(fileName, folderId, file.getBytes());
+            System.out.println("request" + request);
             fileObject = fileService.saveFile(request, userid);
-            FileResponse fileResponse = FileResponse.fromModel(fileObject);
-            return ResponseEntity.ok().body(fileResponse);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Something went wrong");
+            return ResponseEntity.ok().body(FileResponse.fromModel(fileObject));
+        } catch (FileNameAlreadyExists e) {
+            return ResponseEntity.internalServerError().body("Filename occupied");
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("File related problem");
+        } catch (NoSuchFolderFoundException e) {
+            return ResponseEntity.badRequest().body("No folder found, try again with an existing folder");
         }
     }
 
     /**
      * Endpoint to download file
-     * @param id the id (UUID) of the file
-     * @return This method will return the files bytes as a text representation in Bruno, to get the file "properly" use the browser as client
+     * * You need to use Header: "Authorization" with "Bearer: token/password from the user
+     *
+     * @param fileId the id (UUID) of the file
+     * @return This method will return the fileEntity (without bytes) -- > use download-endpoint to get bytes
      */
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> getFileById(@PathVariable UUID id) {
-//       DownloadFileResponse file = fileService.getFileById(id);
-//
-//            try {
-//                return ResponseEntity.ok()
-//                    .header(HttpHeaders.CONTENT_DISPOSITION,
-//                            "attachment; filename=\"" + file.getFileName() + "\"")
-//                    .body(file.getDataInBytes());
-//        }
-//
-//        catch (NoSuchFileFoundException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//            }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getFileById(@PathVariable UUID fileId, Authentication authentication) {
+        try {
+            FileEntity file = fileService.downloadFile(fileId, authentication.getName());
+            return ResponseEntity.ok()
+                    .body(FileResponse.fromModel(file));
+        } catch (NoSuchFileFoundException e) {
+            return ResponseEntity.badRequest().body("File not found");
+        }
+    }
+
+    /**
+     * Endpoint to download file (the bytes as a text representation in Bruno)
+     * * You need to use Header: "Authorization" with "Bearer: token/password from the user
+     * @param fileId the id (UUID) of the file
+     * @return This method will return the files bytes as a text representation
+     */
+
+    @GetMapping("/{fileId}/download")
+    public ResponseEntity<?> downloadFile(@PathVariable UUID fileId, Authentication authentication) {
+        try {
+            FileEntity file = fileService.downloadFile(fileId, authentication.getName());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + file.getFileName() + "\"")
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                    .body(file.getDataInBytes());
+        } catch (NoSuchFileFoundException e) {
+            return ResponseEntity.badRequest().body("File not found");
+        }
+    }
 
     /**
      * Endpoint to delete selected file
+     * You need to use Header: "Authorization" with "Bearer: token/password from the user
      * @param fileId the id (UUID) of the file
-     * @return returns response to the client with status code "Not Found" or "Ok"
+     * @return returns response to the client with status code
      */
 
     @DeleteMapping("/{fileId}")
     public ResponseEntity<?> deleteFileById(@PathVariable UUID fileId, Authentication authentication) {
-        String userid = authentication.getPrincipal() + "";
-        System.out.println("userid:" + userid);
-
         try {
-            fileService.deleteFile(fileId, userid);
-//            FileEntity fileObject = fileService.getFileById(fileId);
-//            FileResponse fileResponse = FileResponse.fromModel(fileObject);
-            return ResponseEntity.ok().body("YES");
-//            return ResponseEntity.ok().body(fileResponse);
-        }
-        catch (NoSuchFileFoundException e) {
+            fileService.deleteFile(fileId, authentication.getName());
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchFileFoundException e) {
             return ResponseEntity.notFound().build();
-        }
-        catch (AutenticationException e) {
+        } catch (AutenticationException e) {
             return ResponseEntity.badRequest().body("Not authorized");
         }
     }
 
-    }
+}
 
 
 

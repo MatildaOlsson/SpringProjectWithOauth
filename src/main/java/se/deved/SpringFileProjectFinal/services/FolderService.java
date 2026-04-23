@@ -1,7 +1,6 @@
 package se.deved.SpringFileProjectFinal.services;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.exception.AuthException;
 import org.springframework.stereotype.Service;
 import se.deved.SpringFileProjectFinal.exceptions.FolderNameAlreadyExists;
 import se.deved.SpringFileProjectFinal.exceptions.NoSuchFolderFoundException;
@@ -21,21 +20,18 @@ public class FolderService {
     private final UserService userService;
 
 
-    //TODO Se över exceptions...
-
     public Folder saveFolder(String folderName, String userid) {
         User user;
         try {
             user = userService.findUserByOidcId(userid);
             System.out.println("User found with id: " + user.getOidcId());
         } catch (NoSuchUserFoundException e) {
-            throw new RuntimeException(e);
+            throw new NoSuchFolderFoundException("User not found");
         }
 
         Optional<Folder> folderOptional = folderRepository.findByFolderName(folderName);
-        Folder folder;
         if (folderOptional.isPresent() && folderOptional.get().getUser().equals(user)) {
-            throw new FolderNameAlreadyExists("Foldername already exists");
+            throw new FolderNameAlreadyExists("Folder name already exists");
         } else {
             return folderRepository.save(new Folder(folderName, user));
         }
@@ -46,8 +42,8 @@ public class FolderService {
         try {
             user = userService.findUserByOidcId(userid);
             System.out.println("User found with id: " + user.getOidcId());
-        } catch (Exception e) {
-            throw new NoSuchUserFoundException("");
+        } catch (NoSuchUserFoundException e) {
+            throw new NoSuchUserFoundException("No user found");
         }
         Optional<Folder> folderOptional = folderRepository.findById(folderId);
         Folder folder;
@@ -56,10 +52,8 @@ public class FolderService {
             System.out.println("Folder:" + folder.getFolderName());
             return folder;
         } else {
-            throw new NoSuchFolderFoundException("");
+            throw new NoSuchFolderFoundException("No such user found");
         }
-
-
     }
 
     public void deleteFolder(UUID id, String userid) {
@@ -76,29 +70,12 @@ public class FolderService {
 
         if (!folder.getUser().equals(user)) {
             throw new NoSuchFolderFoundException("Folder doesn't belongs to user");
-        }
-        else {
+        } else {
             folderRepository.delete(folder);
         }
     }
 }
-//            Folder newFolder = new Folder(folderName);     // Excetion, folderNameAlreadyExists
-//            folderRepository.save(newFolder);
-//            return newFolder;
-//    }
-//
-//   public Optional<Folder> getFolderIfExists (String folderName) {
-//       Optional<Folder> folderOptional = folderRepository.findByFolderName(folderName);
-//       return folderOptional;
-//   }
-//
-//    public void deleteFolder(UUID id) {
-//        Folder folder = folderRepository.findById(id)
-//                .orElseThrow(() -> new NoSuchFolderFoundException("Folder with name: " + id + " was not found"));
-//
-//        folderRepository.delete(folder);
-//     }
-//    }
+
 
 
 

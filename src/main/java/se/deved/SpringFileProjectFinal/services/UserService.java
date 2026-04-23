@@ -4,9 +4,7 @@ import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.deved.SpringFileProjectFinal.exceptions.CreateOidcUserException;
-import se.deved.SpringFileProjectFinal.exceptions.NoSuchFolderFoundException;
-import se.deved.SpringFileProjectFinal.exceptions.UsernameAlreadyExistsException;
-import se.deved.SpringFileProjectFinal.models.Folder;
+import se.deved.SpringFileProjectFinal.exceptions.NoSuchUserFoundException;
 import se.deved.SpringFileProjectFinal.models.User;
 import se.deved.SpringFileProjectFinal.repositories.IUserRepository;
 
@@ -20,21 +18,31 @@ public class UserService {
     private final IUserRepository userRepository;
 
 
-    public User registerOAuthUser(String oidcId, String token) {
+    public User registerOAuthUser(String oidcId) {
         if (oidcId.isBlank()) {
             throw new CreateOidcUserException("No Oidc-id was found");
         }
-        //TODO Exception handling
-//        if (userRepository.findByOidcId(oidcId).isPresent()) {
-//            throw new CreateOidcUserException("User with that id already exists");
-//        }
 
+        User user;
+        Optional<User> userOptional = userRepository.findByOidcId(oidcId);
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            System.out.println("Returning existing user");
+            return user;
+        }
+
+        String token = generateToken();
         User oauthUser = new User(null, token);
         oauthUser.setOidcId(oidcId);
         userRepository.save(oauthUser);
         System.out.println("User with name: " + null + "was saved to repo. Token: " + token);
         return oauthUser;
 
+    }
+
+    private String generateToken() {
+        String token = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+        return token;
     }
 
     public User setNameToUser(String oidcId, String username) {
@@ -45,29 +53,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    //TODO Oklart om denna metod behövs
-    public User createUser(String username, String password) {
-        if (username.isBlank() || username.length() < 2) {
-            throw new IllegalArgumentException("Username must have at least 2 characters");
-        } else if (password.isBlank() || password.length() < 6) {
-            throw new IllegalArgumentException("Password must have at least 6 characters");
-        }
-        //Addera mer password-säkerhet senare
-
-        else if (userRepository.findByUsername(username).isPresent()) {
-            throw new UsernameAlreadyExistsException("User with that name already exists");
-        }
-
-        User newUser = new User(username, password);
-        userRepository.save(newUser);
-        System.out.println("User saved to database");
-        return newUser;
-
-    }
-
     public void deleteUser(UUID id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NoSuchUserFoundException("User not found"));
 
         userRepository.delete(user);
     }
@@ -87,7 +75,7 @@ public class UserService {
 
     public User findUserByOidcId(String oidcId) {
         return userRepository.findByOidcId(oidcId)
-                .orElseThrow(() -> new RuntimeException("Error"));
+                .orElseThrow(() -> new NoSuchUserFoundException("No user found"));
     }
 
     public User findUserById(UUID id) {
@@ -98,69 +86,4 @@ public class UserService {
 
 }
 
-//
-//
-//        public User createUser(String username, String password) {
-//            if (username.isBlank() || username.length() < 2) {
-//                throw new IllegalArgumentException("Username must have at least 2 characters");
-//            } else if (password.isBlank() || password.length() < 6) {
-//                throw new IllegalArgumentException("Password must have at least 6 characters");
-//            }
-//            //Addera mer password-säkerhet senare
-//
-//
-//            else if (userRepository.findByUsername(username).isPresent()) {
-//                throw new UsernameAlreadyExistsException("User with that name already exists");
-//            }
-//
-////        String hashedPassword = passwordEncoder.encode(password);
-//
-//            User newUser = new User(username, null);
-//            userRepository.save(newUser);
-//            System.out.println("User saved to database");
-//            return newUser;
-//
-//        }
-//
-//        public User createOidcUser(String username, String oidcId, String oidcProvider) {
-//            if (userRepository.findByUsername(username).isPresent()) {
-//                throw new UsernameAlreadyExistsException("User with that name already exists");
-//            }
-//
-//            if (userRepository.findByOidcId(oidcId).isPresent()) {
-//                throw new CreateOidcUserException("User already exists");
-//            } else {
-//
-//                User newUser = new User(username, null);
-//                newUser.setOidcId(oidcId);
-//                newUser.setOidcProvider(oidcProvider);
-//
-//                newUser = userRepository.save(newUser);
-//
-//                return newUser;
-//            }
-//
-//        }
-//
-//        public Optional<User> getUserById(UUID userId) {
-//            return userRepository.findById(userId);
-//        }
-//
-//        public Optional<User> getUserByOidc(String oidcId) {
-//            return userRepository.findByOidcId((oidcId));
-//        }
-//
-//    public String authenticateUser(String username, String password) throws AuthException {
-//        var user = userRepository.findByUsername(username)
-//                .orElseThrow(AuthException::new);
-//
-//        if (!passwordEncoder.matches(password, user.getPassword())) {
-//            throw new AuthException();
-//        }
-//
-//        return jwtService.generateToken(user.getId());
-//    }
-//
-//    }
-//
 

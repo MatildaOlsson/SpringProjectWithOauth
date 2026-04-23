@@ -1,13 +1,12 @@
 package se.deved.SpringFileProjectFinal.dtos;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import se.deved.SpringFileProjectFinal.controllers.UserController;
 import se.deved.SpringFileProjectFinal.models.Folder;
 import se.deved.SpringFileProjectFinal.models.User;
-import se.deved.SpringFileProjectFinal.services.UserService;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -30,7 +29,6 @@ public class FolderResponse extends RepresentationModel<FolderResponse> {
     public static FolderResponse fromModel(Folder folder) {
 
         FolderResponse response = new FolderResponse(folder.getId(), folder.getFolderName(), folder.getUser());
-        System.out.println("userInresponse:" + folder.getFolderName());
 
         response.add(linkTo(
                 methodOn(UserController.class).findUserById(folder.getUser().getId()))

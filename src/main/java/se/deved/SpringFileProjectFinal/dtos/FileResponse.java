@@ -6,10 +6,8 @@ import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import se.deved.SpringFileProjectFinal.controllers.UserController;
 import se.deved.SpringFileProjectFinal.models.FileEntity;
-import se.deved.SpringFileProjectFinal.models.Folder;
 import se.deved.SpringFileProjectFinal.models.User;
 
-import java.nio.file.Files;
 import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -37,7 +35,8 @@ public class FileResponse extends RepresentationModel<FileResponse> {
         FileResponse response = new FileResponse(file.getId(), file.getFileName(), file.getUser(), file.getFolder().getFolderName());
 
         response.add(linkTo(
-                methodOn(UserController.class).findUserById(file.getUser().getId()))
+                methodOn(UserController.class).
+                        findUserById(file.getUser().getId()))
                 .withRel("user")
         );
         return response;

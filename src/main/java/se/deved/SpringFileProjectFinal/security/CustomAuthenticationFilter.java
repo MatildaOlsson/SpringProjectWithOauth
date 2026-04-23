@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 import se.deved.SpringFileProjectFinal.models.User;
 import se.deved.SpringFileProjectFinal.services.UserService;
@@ -57,10 +56,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    protected String extractToken (String authorization) { //TODO
-        // input token -- (verify dvs look-up) --> user --> setAuthentication(user)
-        // select username from users where token == token; -> username
-        // catch "no user found"
+    protected String extractToken (String authorization) {
         return authorization.substring(7);
     }
 }

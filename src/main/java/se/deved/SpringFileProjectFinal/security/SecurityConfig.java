@@ -24,13 +24,10 @@ public class SecurityConfig {
                         .requestMatchers("/user/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                // Called ONLY when logging in to github (browser)
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oauth2SuccessHandler)
                 )
-                // Called on every API request
                 .addFilterAfter(new CustomAuthenticationFilter(userService), OAuth2LoginAuthenticationFilter.class);
-
 
         return http.build();
     }

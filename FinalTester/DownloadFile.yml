@@ -1,0 +1,15 @@
+info:
+  name: DownloadFile
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: http://localhost:8080/file/c1bd24eb-168a-4225-8309-82e2e03119f7
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class UserResponse extends RepresentationModel<UserResponse> {
     private final UUID id;
-    private String username;
+    private final String username;
 
     public UserResponse(UUID id, String username) {
         this.id = id;
